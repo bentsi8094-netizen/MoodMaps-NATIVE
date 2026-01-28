@@ -3,6 +3,7 @@ import { StyleSheet, View, StatusBar, Text, TouchableOpacity } from 'react-nativ
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { registerRootComponent } from 'expo';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 // Context Providers
 import { UserProvider, UserContext } from './src/context/UserContext';
@@ -76,13 +77,16 @@ function MainNavigation() {
 
 export default function App() {
   return (
-    <UserProvider>
-      <FeedProvider>
-        <MainNavigation />
-      </FeedProvider>
-    </UserProvider>
+    <SafeAreaProvider>
+      <UserProvider>
+        <FeedProvider>
+          <MainNavigation />
+        </FeedProvider>
+      </UserProvider>
+    </SafeAreaProvider>
   );
 }
+
 
 // רישום האפליקציה
 registerRootComponent(App);
@@ -106,31 +110,31 @@ const styles = StyleSheet.create({
   },
   logoutText: { color: 'white', fontSize: 12, fontWeight: 'bold' },
   contentArea: { flex: 1 },
-  navBarContainer: { 
-    position: 'absolute', 
-    bottom: 30, 
-    width: '100%', 
-    alignItems: 'center' 
+  navBarContainer: {
+    position: 'absolute',
+    bottom: 30,
+    width: '100%',
+    alignItems: 'center'
   },
-  navBar: { 
+  navBar: {
     flexDirection: 'row-reverse', // סדר כפתורים עברית
-    width: '92%', 
-    height: 65, 
-    borderRadius: 35, 
-    backgroundColor: 'rgba(255,255,255,0.25)', 
-    justifyContent: 'space-around', 
+    width: '92%',
+    height: 65,
+    borderRadius: 35,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    justifyContent: 'space-around',
     alignItems: 'center',
     paddingHorizontal: 10,
   },
   navText: { color: 'white', fontWeight: '600', opacity: 0.7 },
   activeNavText: { opacity: 1, textDecorationLine: 'underline' },
-  specialBtn: { 
-    backgroundColor: '#00b4d8', 
-    width: 60, 
-    height: 60, 
-    borderRadius: 30, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
+  specialBtn: {
+    backgroundColor: '#00b4d8',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 20,
     elevation: 8,
     shadowColor: '#000',

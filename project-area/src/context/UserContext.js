@@ -40,9 +40,17 @@ export function UserProvider({ children }) {
       console.error("UserContext: Error during logout", e);
     }
   };
-
+const updateUserMood = async (newMood) => {
+  try {
+    const updatedUser = { ...currentUser, mood: newMood };
+    setCurrentUser(updatedUser);
+    await AsyncStorage.setItem('user_data', JSON.stringify(updatedUser));
+  } catch (e) {
+    console.error("Error updating mood in context", e);
+  }
+};
   return (
-    <UserContext.Provider value={{ currentUser, loginUser, logout, isLoading }}>
+    <UserContext.Provider value={{ currentUser, loginUser, logout, isLoading ,updateUserMood}}>
       {children}
     </UserContext.Provider>
   );
