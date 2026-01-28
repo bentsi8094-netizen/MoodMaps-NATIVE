@@ -3,10 +3,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import GlassCard from './GlassCard';
 
 export default function FeedCard({ post }) {
-  // הגנה: אם אין פוסט, אל תרנדר כלום
   if (!post) return null;
 
-  // פונקציה לעיצוב זמן הפרסום - מחושבת רק כשהתאריך משתנה
   const formattedTime = useMemo(() => {
     if (!post.created_at) return '';
     const date = new Date(post.created_at);
@@ -46,13 +44,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse', // התאמה לעברית: אימוג'י בשמאל, שם בימין
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
   },
   userInfo: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse', // התאמה לעברית
     alignItems: 'center',
   },
   avatar: {
@@ -62,7 +60,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    marginLeft: 10, // רווח הפוך לעברית
   },
   avatarText: {
     color: 'white',
@@ -73,10 +71,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
+    textAlign: 'right',
   },
   time: {
     color: 'rgba(255,255,255,0.5)',
     fontSize: 12,
+    textAlign: 'right',
   },
   emoji: {
     fontSize: 32,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   contentText: {
     color: 'white',
     fontSize: 15,
-    lineHeight: 20,
-    textAlign: 'left',
+    lineHeight: 22,
+    textAlign: 'right', 
   },
 });

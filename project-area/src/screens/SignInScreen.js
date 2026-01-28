@@ -9,9 +9,7 @@ export default function SignInScreen({ onLogin }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
-    // ניקוי רווחים מיותרים
     const cleanEmail = email.trim().toLowerCase();
-    
     if (!cleanEmail || !password) return Alert.alert("שגיאה", "נא למלא אימייל וסיסמה");
     
     setIsLoading(true);
@@ -23,14 +21,13 @@ export default function SignInScreen({ onLogin }) {
       });
 
       const result = await response.json();
-
       if (result.success) {
-        onLogin(result.user); // מפעיל את loginUser בתוך UserContext
+        onLogin(result.user);
       } else {
         Alert.alert("שגיאה", result.error || "פרטי התחברות שגויים");
       }
     } catch (err) {
-      Alert.alert("שגיאת תקשורת", "וודא שהשרת רץ וכתובת ה-IP תקינה");
+      Alert.alert("שגיאת תקשורת", "וודא שהשרת זמין");
     } finally {
       setIsLoading(false);
     }

@@ -17,7 +17,10 @@ export default function NewPostScreen({ onPostSuccess }) {
     if (!content.trim()) return Alert.alert("שגיאה", "אי אפשר לפרסם פוסט ריק");
     
     setIsSubmitting(true);
-    const result = await addPost(currentUser, { emoji: selectedEmoji, content: content.trim() });
+    const result = await addPost(currentUser, { 
+      emoji: selectedEmoji, 
+      content: content.trim() 
+    });
     setIsSubmitting(false);
 
     if (result?.success) {
@@ -30,22 +33,47 @@ export default function NewPostScreen({ onPostSuccess }) {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+    <ScrollView 
+      contentContainerStyle={styles.scrollContainer} 
+      showsVerticalScrollIndicator={false}
+    >
       <Text style={styles.mainTitle}>מה המצב שלך?</Text>
+      
       <GlassCard>
         <Text style={styles.previewEmoji}>{selectedEmoji}</Text>
+        
         <View style={styles.emojiSelector}>
           {EMOJIS.map(emoji => (
-            <TouchableOpacity key={emoji} onPress={() => setSelectedEmoji(emoji)} 
-              style={[styles.emojiBtn, selectedEmoji === emoji && styles.activeEmoji]}>
-              <Text style={{fontSize: 28}}>{emoji}</Text>
+            <TouchableOpacity 
+              key={emoji} 
+              onPress={() => setSelectedEmoji(emoji)} 
+              style={[styles.emojiBtn, selectedEmoji === emoji && styles.activeEmoji]}
+            >
+              <Text style={styles.emojiText}>{emoji}</Text>
             </TouchableOpacity>
           ))}
         </View>
-        <TextInput style={styles.input} placeholder="מה קורה?" placeholderTextColor="rgba(255,255,255,0.5)"
-          value={content} onChangeText={setContent} multiline />
-        <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? <ActivityIndicator color="white" /> : <Text style={styles.submitText}>עדכן מצב</Text>}
+
+        <TextInput 
+          style={styles.input} 
+          placeholder="מה קורה?" 
+          placeholderTextColor="rgba(255,255,255,0.5)"
+          value={content} 
+          onChangeText={setContent} 
+          multiline 
+          textAlign="right"
+        />
+
+        <TouchableOpacity 
+          style={styles.submitBtn} 
+          onPress={handleSubmit} 
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text style={styles.submitText}>עדכן מצב</Text>
+          )}
         </TouchableOpacity>
       </GlassCard>
     </ScrollView>
@@ -53,13 +81,58 @@ export default function NewPostScreen({ onPostSuccess }) {
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: { paddingBottom: 120, paddingTop: 40, alignItems: 'center' },
-  mainTitle: { color: 'white', fontSize: 26, fontWeight: '900', marginBottom: 20 },
-  previewEmoji: { fontSize: 80, textAlign: 'center', marginBottom: 20 },
-  emojiSelector: { flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginBottom: 20 },
-  emojiBtn: { padding: 8, borderRadius: 12 },
-  activeEmoji: { backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 1, borderColor: 'white' },
-  input: { backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 15, padding: 15, color: 'white', minHeight: 80, marginBottom: 20 },
-  submitBtn: { backgroundColor: '#00b4d8', padding: 16, borderRadius: 30, alignItems: 'center' },
-  submitText: { color: 'white', fontWeight: 'bold', fontSize: 18 }
+  scrollContainer: { 
+    paddingBottom: 120, 
+    paddingTop: 40, 
+    alignItems: 'center' 
+  },
+  mainTitle: { 
+    color: 'white', 
+    fontSize: 26, 
+    fontWeight: '900', 
+    marginBottom: 20 
+  },
+  previewEmoji: { 
+    fontSize: 80, 
+    textAlign: 'center', 
+    marginBottom: 20 
+  },
+  emojiSelector: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-around', 
+    width: '100%', 
+    marginBottom: 20 
+  },
+  emojiBtn: { 
+    padding: 8, 
+    borderRadius: 12 
+  },
+  emojiText: {
+    fontSize: 28
+  },
+  activeEmoji: { 
+    backgroundColor: 'rgba(255,255,255,0.2)', 
+    borderWidth: 1, 
+    borderColor: 'white' 
+  },
+  input: { 
+    backgroundColor: 'rgba(0,0,0,0.2)', 
+    borderRadius: 15, 
+    padding: 15, 
+    color: 'white', 
+    minHeight: 80, 
+    marginBottom: 20,
+    textAlign: 'right' 
+  },
+  submitBtn: { 
+    backgroundColor: '#00b4d8', 
+    padding: 16, 
+    borderRadius: 30, 
+    alignItems: 'center' 
+  },
+  submitText: { 
+    color: 'white', 
+    fontWeight: 'bold', 
+    fontSize: 18 
+  }
 });

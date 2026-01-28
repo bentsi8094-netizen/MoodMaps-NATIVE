@@ -2,9 +2,13 @@ import React, { useState, useContext } from 'react';
 import { StyleSheet, View, StatusBar, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { registerRootComponent } from 'expo';
+
+// Context Providers
 import { UserProvider, UserContext } from './src/context/UserContext';
 import { FeedProvider } from './src/context/FeedContext';
 
+// Screens
 import UserMainScreen from './src/screens/UserMainScreen';
 import FeedScreen from './src/screens/FeedScreen';
 import NewPostScreen from './src/screens/NewPostScreen';
@@ -15,6 +19,7 @@ function MainNavigation() {
   const { currentUser, logout } = useContext(UserContext);
   const [activeTab, setActiveTab] = useState('feed');
 
+  // מסך התחברות (Auth Flow)
   if (!currentUser) {
     return (
       <View style={styles.fullScreen}>
@@ -24,21 +29,20 @@ function MainNavigation() {
     );
   }
 
+  // ניווט ראשי (Main App)
   return (
     <View style={styles.fullScreen}>
       <StatusBar barStyle="light-content" />
       <LinearGradient colors={['#00b4d8', '#9d4edd', '#f72585']} style={StyleSheet.absoluteFill} />
 
       <SafeAreaView style={styles.safeArea}>
-        {/* Header עליון */}
         <View style={styles.topHeader}>
-          <Text style={styles.userName}>היי, {currentUser.firstName} 👋</Text>
           <TouchableOpacity onPress={logout} style={styles.logoutBtn}>
             <Text style={styles.logoutText}>התנתק</Text>
           </TouchableOpacity>
+          <Text style={styles.userName}>היי, {currentUser.firstName} 👋</Text>
         </View>
 
-        {/* שטח התוכן */}
         <View style={styles.contentArea}>
           {activeTab === 'feed' && <FeedScreen />}
           {activeTab === 'my' && <MyPostsScreen />}
@@ -46,21 +50,22 @@ function MainNavigation() {
           {activeTab === 'map' && <MapScreen />}
         </View>
 
-        {/* תפריט ניווט תחתון (Tab Bar) */}
         <View style={styles.navBarContainer}>
           <View style={styles.navBar}>
-            <TouchableOpacity onPress={() => setActiveTab('map')}>
-              <Text style={[styles.navText, activeTab === 'map' && styles.activeNavText]}>מפה</Text>
+            <TouchableOpacity style={styles.specialBtn} onPress={() => setActiveTab('new')}>
+              <Text style={styles.specialBtnText}>+</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setActiveTab('feed')}>
-              <Text style={[styles.navText, activeTab === 'feed' && styles.activeNavText]}>פיד</Text>
-            </TouchableOpacity>
+
             <TouchableOpacity onPress={() => setActiveTab('my')}>
               <Text style={[styles.navText, activeTab === 'my' && styles.activeNavText]}>המוד שלי</Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.specialBtn} onPress={() => setActiveTab('new')}>
-              <Text style={{ color: 'white', fontSize: 30, fontWeight: 'bold' }}>+</Text>
+
+            <TouchableOpacity onPress={() => setActiveTab('feed')}>
+              <Text style={[styles.navText, activeTab === 'feed' && styles.activeNavText]}>פיד</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => setActiveTab('map')}>
+              <Text style={[styles.navText, activeTab === 'map' && styles.activeNavText]}>מפה</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -78,6 +83,9 @@ export default function App() {
     </UserProvider>
   );
 }
+
+// רישום האפליקציה
+registerRootComponent(App);
 
 const styles = StyleSheet.create({
   fullScreen: { flex: 1 },
@@ -102,10 +110,10 @@ const styles = StyleSheet.create({
     position: 'absolute', 
     bottom: 30, 
     width: '100%', 
-    alignItems: 'center' ,
+    alignItems: 'center' 
   },
   navBar: { 
-    flexDirection: 'row', 
+    flexDirection: 'row-reverse', // סדר כפתורים עברית
     width: '92%', 
     height: 65, 
     borderRadius: 35, 
@@ -113,7 +121,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around', 
     alignItems: 'center',
     paddingHorizontal: 10,
-    
   },
   navText: { color: 'white', fontWeight: '600', opacity: 0.7 },
   activeNavText: { opacity: 1, textDecorationLine: 'underline' },
@@ -130,5 +137,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
-  }
+  },
+  specialBtnText: { color: 'white', fontSize: 30, fontWeight: 'bold' }
 });

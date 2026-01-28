@@ -15,7 +15,7 @@ export function UserProvider({ children }) {
           setCurrentUser(JSON.parse(storedUser));
         }
       } catch (e) {
-        console.error("Failed to load user from storage", e);
+        console.error("UserContext: Error loading session", e);
       } finally {
         setIsLoading(false);
       }
@@ -28,7 +28,7 @@ export function UserProvider({ children }) {
       setCurrentUser(user);
       await AsyncStorage.setItem('user_data', JSON.stringify(user));
     } catch (e) {
-      console.error("Failed to save user session", e);
+      console.error("UserContext: Error saving session", e);
     }
   };
 
@@ -37,7 +37,7 @@ export function UserProvider({ children }) {
       await AsyncStorage.removeItem('user_data'); 
       setCurrentUser(null);
     } catch (e) {
-      console.error("Error logging out:", e);
+      console.error("UserContext: Error during logout", e);
     }
   };
 

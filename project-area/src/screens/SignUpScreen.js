@@ -11,27 +11,24 @@ export default function SignUpScreen({ onRegister }) {
   });
 
   const handleSubmit = async () => {
-    if (!formData.email || !formData.password) {
-      return Alert.alert("שגיאה", "נא למלא את כל הפרטים");
+    if (!formData.email || !formData.password || !formData.firstName) {
+      return Alert.alert("שגיאה", "נא למלא את כל פרטי החובה");
     }
 
     setIsLoading(true);
     try {
-      const dataToSend = {
-        ...formData,
-        email: formData.email.trim().toLowerCase()
-      };
-
       const response = await fetch(`${API_BASE_URL}/api/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToSend),
+        body: JSON.stringify({
+          ...formData,
+          email: formData.email.trim().toLowerCase()
+        }),
       });
 
       const result = await response.json();
-
       if (result.success) {
-        onRegister(result.user); // שומר את המשתמש החדש ב-Context ובזיכרון
+        onRegister(result.user);
       } else {
         Alert.alert("שגיאה", result.error || "הרישום נכשל");
       }
@@ -49,10 +46,20 @@ export default function SignUpScreen({ onRegister }) {
         {step === 1 ? (
           <View>
             <Text style={styles.stepText}>שלב 1: פרטים אישיים</Text>
-            <TextInput style={styles.input} placeholder="שם פרטי" placeholderTextColor="#ccc"
-              value={formData.firstName} onChangeText={(v) => setFormData({...formData, firstName: v})} />
-            <TextInput style={styles.input} placeholder="שם משפחה" placeholderTextColor="#ccc"
-              value={formData.lastName} onChangeText={(v) => setFormData({...formData, lastName: v})} />
+            <TextInput 
+              style={styles.input} 
+              placeholder="שם פרטי" 
+              placeholderTextColor="#ccc"
+              value={formData.firstName} 
+              onChangeText={(v) => setFormData({...formData, firstName: v})} 
+            />
+            <TextInput 
+              style={styles.input} 
+              placeholder="שם משפחה" 
+              placeholderTextColor="#ccc"
+              value={formData.lastName} 
+              onChangeText={(v) => setFormData({...formData, lastName: v})} 
+            />
             <TouchableOpacity style={styles.button} onPress={() => setStep(2)}>
               <Text style={styles.buttonText}>המשך</Text>
             </TouchableOpacity>
@@ -60,16 +67,29 @@ export default function SignUpScreen({ onRegister }) {
         ) : (
           <View>
             <Text style={styles.stepText}>שלב 2: פרטי התחברות</Text>
-            <TextInput style={styles.input} placeholder="אימייל" keyboardType="email-address" placeholderTextColor="#ccc" autoCapitalize="none"
-              value={formData.email} onChangeText={(v) => setFormData({...formData, email: v})} />
-            <TextInput style={styles.input} placeholder="סיסמה" secureTextEntry placeholderTextColor="#ccc"
-              value={formData.password} onChangeText={(v) => setFormData({...formData, password: v})} />
+            <TextInput 
+              style={styles.input} 
+              placeholder="אימייל" 
+              keyboardType="email-address" 
+              placeholderTextColor="#ccc" 
+              autoCapitalize="none"
+              value={formData.email} 
+              onChangeText={(v) => setFormData({...formData, email: v})} 
+            />
+            <TextInput 
+              style={styles.input} 
+              placeholder="סיסמה" 
+              secureTextEntry 
+              placeholderTextColor="#ccc"
+              value={formData.password} 
+              onChangeText={(v) => setFormData({...formData, password: v})} 
+            />
             <View style={styles.row}>
               <TouchableOpacity style={[styles.button, styles.backBtn]} onPress={() => setStep(1)}>
                 <Text style={styles.buttonText}>חזור</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.button, {flex: 2}]} onPress={handleSubmit} disabled={isLoading}>
-                {isLoading ? <ActivityIndicator color="white" /> : <Text style={styles.buttonText}>סיום והרשמה</Text>}
+                {isLoading ? <ActivityIndicator color="white" /> : <Text style={styles.buttonText}>סיום</Text>}
               </TouchableOpacity>
             </View>
           </View>

@@ -61,6 +61,7 @@ export default function MapScreen() {
 
     fetchMapUsers();
     const interval = setInterval(fetchMapUsers, 20000);
+
     return () => {
       if (locationSubscription) locationSubscription.remove();
       clearInterval(interval);
@@ -68,30 +69,25 @@ export default function MapScreen() {
   }, []);
 
   const renderMarkers = useMemo(() => {
-  return usersWithLocations.map((user) => {
-    if (!user.activeEmoji) return null;
+    return usersWithLocations.map((user) => {
+      if (!user.activeEmoji) return null;
+      const isMe = user.id === currentUser.id;
 
-    // האם זה המשתמש הנוכחי?
-    const isMe = user.id === currentUser.id;
-
-    return (
-      <Marker
-        key={`${user.id}-${user.activeEmoji}`}
-        coordinate={{ latitude: user.latitude, longitude: user.longitude }}
-        anchor={{ x: 0.5, y: 0.5 }}
-        // אם זה אני, ה-zIndex יהיה הכי גבוה שיש
-        zIndex={isMe ? 9999 : 1000}
-        tracksViewChanges={true}
-      >
-        <View style={styles.emojiContainer}>
-          <Text style={[styles.preciseEmoji, isMe && styles.myEmoji]}>
-            {user.activeEmoji}
-          </Text>
-        </View>
-      </Marker>
-    );
-  });
-}, [usersWithLocations, currentUser.id]);
+      return (
+        <Marker
+          key={`${user.id}-${user.activeEmoji}`}
+          coordinate={{ latitude: user.latitude, longitude: user.longitude }}
+          anchor={{ x: 0.5, y: 0.5 }}
+          zIndex={isMe ? 9999 : 1000}
+          tracksViewChanges={true}
+        >
+          <View style={[styles.emojiContainer, isMe && styles.myEmojiContainer]}>
+            <Text style={styles.preciseEmoji}>{user.activeEmoji}</Text>
+          </View>
+        </Marker>
+      );
+    });
+  }, [usersWithLocations, currentUser.id]);
 
   return (
     <View style={styles.container}>
@@ -100,7 +96,7 @@ export default function MapScreen() {
           provider={PROVIDER_GOOGLE}
           style={styles.map}
           initialRegion={location}
-          showsUserLocation={false} // כיבוי הנקודה הכחולה המובנית
+          showsUserLocation={false}
           followsUserLocation={false}
         >
           {renderMarkers}
@@ -135,19 +131,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'transparent',
   },
+  myEmojiContainer: {
+    borderWidth: 2,
+    borderColor: '#ff0099',
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 0, 153, 0.1)',
+  },
   preciseEmoji: {
-    fontSize: 16,
+    fontSize: 26, // החזרתי לגודל קריא יותר, 16 היה קטן מדי למפה
     includeFontPadding: false,
     textAlign: 'center',
-    textAlignVertical: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
-  },
-  myEmoji: {
-  borderWidth: 2,
-  borderColor: '#ff0099',
-  borderRadius: 35,
-  backgroundColor: 'rgba(32, 17, 17, 0.3)',
-}
+  }
 });

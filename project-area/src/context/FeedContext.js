@@ -10,6 +10,7 @@ export function FeedProvider({ children }) {
 
   const fetchPosts = useCallback(async (force = false) => {
     const now = Date.now();
+    // מניעת קריאות כפולות או תכופות מדי (פחות מ-30 שניות)
     if (isLoading || (!force && lastFetched && now - lastFetched < 30000)) return;
 
     setIsLoading(true);
@@ -50,12 +51,8 @@ export function FeedProvider({ children }) {
 
       if (result.success) {
         setPosts(prev => {
-          // אם המשתמש כבר קיים בפיד - מעדכנים אותו, אם לא - מוסיפים להתחלה
-          const exists = prev.find(p => p.user_id === user.id);
-          if (exists) {
-            return prev.map(p => p.user_id === user.id ? result.post : p);
-          }
-          return [result.post, ...prev];
+          const filtered = prev.filter(p => p.user_id !== user.id);
+          return [result.post, ...filtered];
         });
         return { success: true };
       }
