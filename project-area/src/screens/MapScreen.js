@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { color: '#333', marginTop: 15, fontSize: 16 },
   emojiContainer: {
-    width: 44,
-    height: 44,
+    width: 30,
+    height: 30,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 0, 153, 0.1)',
   },
   preciseEmoji: {
-    fontSize: 26, // החזרתי לגודל קריא יותר, 16 היה קטן מדי למפה
+    fontSize: 20, // החזרתי לגודל קריא יותר, 16 היה קטן מדי למפה
     includeFontPadding: false,
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
