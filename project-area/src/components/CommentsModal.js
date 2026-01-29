@@ -123,14 +123,16 @@ export default function CommentsModal({ visible, onClose, postId, postAlias }) {
 }
 
 const styles = StyleSheet.create({
-  overlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.7)' },
+  overlay: { maxHeight: '100%',flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0, 0, 0, 0)' ,paddingVertical: 0},
   container: { 
-    height: '80%', 
-    backgroundColor: '#121225', 
+    position: 'fixed',
+    height: '70%', 
+    backgroundColor: 'rgb(190, 130, 163)', 
     borderTopLeftRadius: 30, 
     borderTopRightRadius: 30, 
     paddingTop: 20,
     paddingHorizontal: 15,
+    opacity:1,
   },
   header: { 
     flexDirection: 'row-reverse', 
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   title: { color: 'white', fontSize: 17, fontWeight: 'bold', textAlign: 'right' },
-  closeBtn: { color: '#ff4d4d', fontWeight: 'bold', fontSize: 16 },
+  closeBtn: { color: '#7dffdf', fontWeight: 'bold', fontSize: 16 },
   listContent: { paddingBottom: 30 },
   
   // לוגיקת בועות הצ'אט
@@ -167,7 +169,7 @@ const styles = StyleSheet.create({
   commentText: { color: 'white', fontSize: 15, textAlign: 'right' },
   commentTime: { color: 'rgba(255,255,255,0.5)', fontSize: 9, marginTop: 4, textAlign: 'left' },
 
-  emptyText: { color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: 40 },
+  emptyText: { color: 'rgba(255, 255, 255, 0.4)', textAlign: 'center', marginTop: 40 },
   inputArea: { 
     flexDirection: 'row-reverse', 
     alignItems: 'center', 
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255,255,255,0.1)',
-    backgroundColor: '#121225'
+    backgroundColor: 'rgba(0, 0, 0, 0)',
   },
   input: { 
     flex: 1, 

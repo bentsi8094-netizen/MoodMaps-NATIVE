@@ -22,10 +22,9 @@ export default function EmojiAiAgent({ onAiResult }) {
             const data = await response.json();
             
             if (data.success) {
-                // שולח למסך האב את הנתונים החדשים מה-AI
                 onAiResult({
                     emoji: data.emoji,
-                    stickerUrl: data.stickerUrl // זה ה-URL מה-Giphy/AI
+                    stickerUrl: data.stickerUrl 
                 });
                 setInputValue('');
             }
@@ -40,14 +39,15 @@ export default function EmojiAiAgent({ onAiResult }) {
         <View style={styles.container}>
             <TextInput
                 style={styles.input}
-                placeholder={loading ? "ה-AI מחפש מדבקה..." : "מה המוד שלך?"}
-                placeholderTextColor="rgba(255,255,255,0.4)"
+                placeholder={loading ? "ה-AI מחפש מדבקה..." : "בקש אימוג'י מAI"}
+                placeholderTextColor="rgb(0, 213, 255)" 
                 editable={!loading}
                 value={inputValue}
                 onChangeText={setInputValue}
                 onSubmitEditing={handleProcessInput}
                 textAlign="right"
                 returnKeyType="done"
+                multiline={true}
             />
 
             <TouchableOpacity
@@ -68,32 +68,35 @@ export default function EmojiAiAgent({ onAiResult }) {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row-reverse',
-        padding: 6,
+        padding: 4,
         backgroundColor: 'rgba(255,255,255,0.1)',
         borderRadius: 22,
-        alignItems: 'center',
+        alignItems: 'flex-start', 
         width: '100%',
-        height: 62,
+        minHeight: 90, 
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.15)',
+        borderColor: 'rgba(0, 213, 255, 0.72)', 
     },
     input: {
         flex: 1,
         color: 'white',
-        paddingHorizontal: 15,
-        height: '100%',
+        paddingHorizontal: 12,
+        paddingTop: 8, 
         fontSize: 16,
         fontWeight: '500',
-        textAlign: 'right'
+        textAlign: 'right',
+        minHeight: 75,
     },
     btn: {
-        backgroundColor: '#00b4d8',
-        height: '100%',
-        paddingHorizontal: 25,
-        borderRadius: 18,
+        backgroundColor: '', 
+        height: 30, // התאמת גובה הכפתור לתיבה המוקטנת
+        paddingHorizontal: 18,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
+        alignSelf: 'flex-end', 
+        marginBottom: 4,
     },
-    btnDisabled: { backgroundColor: 'rgba(0, 180, 216, 0.3)' },
-    btnText: { color: 'white', fontWeight: '900', fontSize: 16 }
+    btnDisabled: { backgroundColor: 'rgb(0, 213, 255)' },
+    btnText: { color: 'white', fontWeight: 'bold', fontSize: 14 }
 });

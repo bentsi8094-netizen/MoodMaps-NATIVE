@@ -23,7 +23,6 @@ export default function NewPostScreen({ onPostSuccess }) {
 
     setLoading(true);
     try {
-      // שליחת הפוסט - משתמשים ב-Alias הקיים מה-Context
       const result = await addPost(currentUser, {
         emoji: currentMood.emoji,
         stickerUrl: currentMood.stickerUrl,
@@ -60,24 +59,34 @@ export default function NewPostScreen({ onPostSuccess }) {
             )}
           </View>
 
-          <EmojiAiAgent onAiResult={(data) => setCurrentMood(data)} />
+          {/* רכיב ה-AI - תיבה גדולה, פלייסאולדר תכלת */}
+          <View style={styles.aiAgentWrapper}>
+            <EmojiAiAgent 
+              onAiResult={(data) => setCurrentMood(data)} 
+              placeholder="בקש אימוג'י מAI" 
+              placeholderTextColor="#00b4d8" 
+              inputStyle={styles.aiInputLarge}
+            />
+          </View>
 
+          {/* אינפוט טקסט חופשי - קטן, פלייסאולדר ורוד */}
           <TextInput
-            style={styles.input}
-            placeholder="מה קורה עכשיו?"
-            placeholderTextColor="#aaa"
+            style={styles.contentInputSmall}
+            placeholder="איך זה שאתה ככה..."
+            placeholderTextColor="#f72585"
             value={postContent}
             onChangeText={setPostContent}
-            multiline
+            multiline={false}
             maxLength={200}
           />
 
+          {/* כפתור פרסום - קטן, תכלת, רק המילה "פרסם" */}
           <TouchableOpacity 
-            style={[styles.btn, (!postContent.trim() && !currentMood.stickerUrl) && styles.btnDisabled]} 
+            style={[styles.publishBtn, (!postContent.trim() && !currentMood.stickerUrl) && styles.btnDisabled]} 
             onPress={handlePublish}
             disabled={loading}
           >
-            {loading ? <ActivityIndicator color="white" /> : <Text style={styles.btnText}>פרסם מוד ✨</Text>}
+            {loading ? <ActivityIndicator color="white" /> : <Text style={styles.publishBtnText}>פרסם</Text>}
           </TouchableOpacity>
         </GlassCard>
       </Animatable.View>
@@ -91,8 +100,47 @@ const styles = StyleSheet.create({
   preview: { height: 180, alignItems: 'center', justifyContent: 'center', marginBottom: 10, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 20 },
   sticker: { width: 150, height: 150 },
   bigEmoji: { fontSize: 80 },
-  input: { backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 15, padding: 15, color: 'white', marginTop: 20, minHeight: 100, textAlign: 'right', fontSize: 16 },
-  btn: { backgroundColor: '#00b4d8', padding: 18, borderRadius: 20, marginTop: 20, alignItems: 'center' },
+  
+  aiAgentWrapper: {
+    marginTop: 10,
+  },
+  
+  aiInputLarge: {
+    minHeight: 100, // גובה גדול
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 15,
+    padding: 15,
+    color: 'white',
+    textAlign: 'right',
+    fontSize: 16,
+  },
+
+  contentInputSmall: { 
+    backgroundColor: 'rgba(255,255,255,0.1)', 
+    borderRadius: 15, 
+    padding: 12, 
+    color: 'white', 
+    marginTop: 20, 
+    height: 50, // גובה קטן
+    textAlign: 'right', 
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(247, 37, 133, 0.3)' 
+  },
+
+  publishBtn: { 
+    backgroundColor: '#00b4d8', // צבע תכלת מובהק
+    paddingVertical: 12, 
+    paddingHorizontal: 50, 
+    borderRadius: 25, 
+    marginTop: 25, 
+    alignSelf: 'center',
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 5
+  },
+  
   btnDisabled: { backgroundColor: '#444' },
-  btnText: { color: 'white', fontWeight: 'bold', fontSize: 18 }
+  publishBtnText: { color: 'white', fontWeight: 'bold', fontSize: 16 }
 });
