@@ -1,10 +1,13 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Image } from 'expo-image'; // שימוש ב-Expo Image לביצועים
+import React, { useMemo, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import * as Animatable from 'react-native-animatable';
 import GlassCard from './GlassCard';
+import CommentsModal from './CommentsModal';
 
 export default function FeedCard({ post }) {
+  const [isCommentsVisible, setCommentsVisible] = useState(false);
+
   if (!post) return null;
 
   const formattedTime = useMemo(() => {
@@ -20,11 +23,13 @@ export default function FeedCard({ post }) {
           <View style={styles.userInfo}>
             <View style={styles.avatar}>
               <Text style={styles.avatarText}>
-                {post.user_name ? post.user_name[0].toUpperCase() : '?'}
+                {/* מציג את האות הראשונה של הכינוי האנונימי */}
+                {post.user_alias ? post.user_alias[0].toUpperCase() : '?'}
               </Text>
             </View>
             <View>
-              <Text style={styles.userName}>{post.user_name || 'משתמש אנונימי'}</Text>
+              {/* שימוש בכינוי האנונימי במקום השם האמיתי */}
+              <Text style={styles.userName}>{post.user_alias || 'משתמש אנונימי'}</Text>
               <Text style={styles.time}>{formattedTime}</Text>
             </View>
           </View>
@@ -35,7 +40,7 @@ export default function FeedCard({ post }) {
                 source={{ uri: post.sticker_url }} 
                 style={styles.stickerSmall} 
                 contentFit="contain"
-                transition={500} // אפקט הופעה רכה
+                transition={500}
               />
             ) : (
               <Text style={styles.emoji}>{post.emoji}</Text>
@@ -48,13 +53,28 @@ export default function FeedCard({ post }) {
             <Text style={styles.contentText}>{post.content}</Text>
           </View>
         ) : null}
+
+        {/* כפתור תגובות טכנולוגי וקליל */}
+        <TouchableOpacity 
+          style={styles.commentBar} 
+          onPress={() => setCommentsVisible(true)}
+        >
+          <Text style={styles.commentText}>💬 הוסף תגובה...</Text>
+        </TouchableOpacity>
       </GlassCard>
+
+      <CommentsModal 
+        visible={isCommentsVisible} 
+        onClose={() => setCommentsVisible(false)} 
+        postId={post.id}
+        postAlias={post.user_alias}
+      />
     </Animatable.View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { marginBottom: 12, width: '95%', alignSelf: 'center' },
+  card: { marginBottom: 12, width: '95%', alignSelf: 'center', paddingBottom: 10 },
   header: { flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center' },
   userInfo: { flexDirection: 'row-reverse', alignItems: 'center' },
   avatar: { 
@@ -63,11 +83,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center', marginLeft: 10 
   },
   avatarText: { color: 'white', fontWeight: 'bold', fontSize: 14 },
-  userName: { color: 'white', fontSize: 15, fontWeight: '700', textAlign: 'right' },
+  userName: { color: '#00b4d8', fontSize: 15, fontWeight: '700', textAlign: 'right' },
   time: { color: 'rgba(255,255,255,0.4)', fontSize: 11, textAlign: 'right' },
   emojiWrapper: { width: 50, height: 50, justifyContent: 'center', alignItems: 'center' },
   emoji: { fontSize: 32 },
   stickerSmall: { width: 50, height: 50 },
   contentContainer: { marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.08)' },
   contentText: { color: 'white', fontSize: 15, lineHeight: 22, textAlign: 'right', opacity: 0.9 },
+  commentBar: { marginTop: 15, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 15, padding: 8, paddingRight: 15 },
+  commentText: { color: 'rgba(255,255,255,0.5)', fontSize: 13, textAlign: 'right' }
 });

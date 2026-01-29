@@ -5,11 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { registerRootComponent } from 'expo';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-// Context Providers
 import { UserProvider, UserContext } from './src/context/UserContext';
 import { FeedProvider } from './src/context/FeedContext';
 
-// Screens
 import UserMainScreen from './src/screens/UserMainScreen';
 import FeedScreen from './src/screens/FeedScreen';
 import NewPostScreen from './src/screens/NewPostScreen';
@@ -19,8 +17,8 @@ import MyPostsScreen from './src/screens/MyPostsScreen';
 function MainNavigation() {
   const { currentUser, logout } = useContext(UserContext);
   const [activeTab, setActiveTab] = useState('feed');
+  const [targetPostId, setTargetPostId] = useState(null); // המשתנה שזוכר לאן לעבור מהמפה
 
-  // מסך התחברות (Auth Flow)
   if (!currentUser) {
     return (
       <View style={styles.fullScreen}>
@@ -30,7 +28,6 @@ function MainNavigation() {
     );
   }
 
-  // ניווט ראשי (Main App)
   return (
     <View style={styles.fullScreen}>
       <StatusBar barStyle="light-content" />
@@ -45,10 +42,20 @@ function MainNavigation() {
         </View>
 
         <View style={styles.contentArea}>
-          {activeTab === 'feed' && <FeedScreen />}
+          {activeTab === 'feed' && (
+            <FeedScreen 
+              targetPostId={targetPostId} 
+              onTargetReached={() => setTargetPostId(null)} 
+            />
+          )}
           {activeTab === 'my' && <MyPostsScreen />}
           {activeTab === 'new' && <NewPostScreen onPostSuccess={() => setActiveTab('feed')} />}
-          {activeTab === 'map' && <MapScreen />}
+          {activeTab === 'map' && (
+            <MapScreen 
+              setActiveTab={setActiveTab} 
+              setTargetPostId={setTargetPostId} 
+            />
+          )}
         </View>
 
         <View style={styles.navBarContainer}>
@@ -87,60 +94,20 @@ export default function App() {
   );
 }
 
-
-// רישום האפליקציה
 registerRootComponent(App);
 
 const styles = StyleSheet.create({
   fullScreen: { flex: 1 },
   safeArea: { flex: 1 },
-  topHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
+  topHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 10 },
   userName: { color: 'white', fontWeight: 'bold', fontSize: 16 },
-  logoutBtn: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 15
-  },
   logoutText: { color: 'white', fontSize: 12, fontWeight: 'bold' },
+  logoutBtn: { backgroundColor: 'rgba(255,255,255,0.2)', paddingVertical: 6, paddingHorizontal: 12, borderRadius: 15 },
   contentArea: { flex: 1 },
-  navBarContainer: {
-    position: 'absolute',
-    bottom: 30,
-    width: '100%',
-    alignItems: 'center'
-  },
-  navBar: {
-    flexDirection: 'row-reverse', // סדר כפתורים עברית
-    width: '92%',
-    height: 65,
-    borderRadius: 35,
-    backgroundColor: 'rgba(255,255,255,0.25)',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-  },
+  navBarContainer: { position: 'absolute', bottom: 30, width: '100%', alignItems: 'center' },
+  navBar: { flexDirection: 'row-reverse', width: '92%', height: 65, borderRadius: 35, backgroundColor: 'rgba(255,255,255,0.25)', justifyContent: 'space-around', alignItems: 'center' },
   navText: { color: 'white', fontWeight: '600', opacity: 0.7 },
   activeNavText: { opacity: 1, textDecorationLine: 'underline' },
-  specialBtn: {
-    backgroundColor: '#00b4d8',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-  },
+  specialBtn: { backgroundColor: '#00b4d8', width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', marginBottom: 20, elevation: 8 },
   specialBtnText: { color: 'white', fontSize: 30, fontWeight: 'bold' }
 });

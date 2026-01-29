@@ -7,20 +7,17 @@ export function FeedProvider({ children }) {
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    /**
+     * שליפת כל הפוסטים מהשרת
+     */
     const fetchPosts = useCallback(async () => {
         setIsLoading(true);
-        console.log("📡 Connecting to:", `${API_BASE_URL}/api/posts`);
-        
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-
         try {
-            const response = await fetch(`${API_BASE_URL}/api/posts`, {
-                signal: controller.signal
-            });
+            const response = await fetch(`${API_BASE_URL}/api/posts`);
             const result = await response.json();
             
             if (result.success) {
+                // נרמול הנתונים (הפיכת snake_case מ-DB ל-camelCase לאפליקציה)
                 const normalizedPosts = result.posts.map(post => ({
                     ...post,
                     stickerUrl: post.sticker_url 
@@ -28,17 +25,15 @@ export function FeedProvider({ children }) {
                 setPosts(normalizedPosts);
             }
         } catch (error) {
-            if (error.name === 'AbortError') {
-                console.error("❌ Feed Error: Request timed out");
-            } else {
-                console.error("❌ Feed Error Details:", error);
-            }
+            console.error("❌ Feed Fetch Error:", error);
         } finally {
-            clearTimeout(timeoutId);
             setIsLoading(false);
         }
     }, []);
 
+    /**
+     * הוספת פוסט חדש או עדכון קיים (Upsert)
+     */
     const addPost = async (user, postData) => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/posts`, {
@@ -47,43 +42,61 @@ export function FeedProvider({ children }) {
                 body: JSON.stringify({
                     user_id: user.id,
                     user_name: `${user.firstName} ${user.lastName}`,
+                    user_alias: user.alias, // קריטי: שולחים את ה-Alias הקבוע מה-UserContext
                     emoji: postData.emoji,
                     content: postData.content,
                     stickerUrl: postData.stickerUrl 
                 }),
             });
+
             const result = await response.json();
+
             if (result.success) {
+                // במקום לחכות לריענון מהשרת, אפשר לעדכן מקומית לביצועים מהירים (Optmistic Update)
                 await fetchPosts(); 
-                return { success: true };
+                return { success: true, post: result.post };
             }
+            return { success: false, error: result.error };
         } catch (error) { 
-            console.error("Add Post Error:", error);
-            return { success: false }; 
+            console.error("❌ Add Post Error:", error);
+            return { success: false, error: error.message }; 
         }
     };
 
+    /**
+     * מחיקת פוסט
+     */
     const removePost = async (userId) => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/posts/${userId}`, {
                 method: 'DELETE',
             });
             const result = await response.json();
+            
             if (result.success) {
-                // עדכון הסטייט המקומי כדי שהפוסט יימחק מהמסך מיד
                 setPosts(prev => prev.filter(p => p.user_id !== userId));
                 return { success: true };
             }
+            return { success: false };
         } catch (error) {
-            console.error("Delete Error:", error);
+            console.error("❌ Delete Post Error:", error);
             return { success: false };
         }
     };
 
-    useEffect(() => { fetchPosts(); }, [fetchPosts]);
+    // טעינה ראשונית
+    useEffect(() => { 
+        fetchPosts(); 
+    }, [fetchPosts]);
 
     return (
-        <FeedContext.Provider value={{ posts, addPost, removePost, fetchPosts, isLoading }}>
+        <FeedContext.Provider value={{ 
+            posts, 
+            addPost, 
+            removePost, 
+            fetchPosts, 
+            isLoading 
+        }}>
             {children}
         </FeedContext.Provider>
     );

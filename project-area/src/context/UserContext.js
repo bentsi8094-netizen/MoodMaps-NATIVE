@@ -7,6 +7,7 @@ export function UserProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // טעינת משתמש שמור מהזיכרון המקומי בהפעלת האפליקציה
   useEffect(() => {
     const loadStoredUser = async () => {
       try {
@@ -23,8 +24,13 @@ export function UserProvider({ children }) {
     loadStoredUser();
   }, []);
 
+  /**
+   * התחברות או הרשמה - שמירת נתוני המשתמש כולל ה-Alias
+   */
   const loginUser = async (user) => {
     try {
+      // מוודאים שהאובייקט שנשמר מכיל את כל השדות מהשרת:
+      // id, firstName, lastName, email, alias
       setCurrentUser(user);
       await AsyncStorage.setItem('user_data', JSON.stringify(user));
     } catch (e) {
@@ -32,6 +38,9 @@ export function UserProvider({ children }) {
     }
   };
 
+  /**
+   * התנתקות
+   */
   const logout = async () => {
     try {
       await AsyncStorage.removeItem('user_data'); 
@@ -41,26 +50,39 @@ export function UserProvider({ children }) {
     }
   };
 
-  // פונקציה מעודכנת השומרת גם את האימוג'י וגם את כתובת המדבקה
+  /**
+   * עדכון המוד והמדבקה - שומר על ה-Alias ועל שאר הפרטים
+   */
   const updateUserMood = async (newMood, stickerUrl = null) => {
     try {
       if (!currentUser) return;
 
-      const updatedUser = { 
-        ...currentUser, 
-        mood: newMood, 
-        stickerUrl: stickerUrl // שומרים את ה-URL של המדבקה מה-AI
-      };
-      
-      setCurrentUser(updatedUser);
-      await AsyncStorage.setItem('user_data', JSON.stringify(updatedUser));
+      // שימוש ב-Functional Update של useState מבטיח שאנחנו עובדים על המידע הכי עדכני
+      setCurrentUser(prevUser => {
+        const updated = { 
+          ...prevUser, 
+          mood: newMood, 
+          stickerUrl: stickerUrl 
+        };
+        
+        // שמירה ל-AsyncStorage בתוך הבלוק כדי להבטיח סנכרון
+        AsyncStorage.setItem('user_data', JSON.stringify(updated));
+        return updated;
+      });
+
     } catch (e) {
-      console.error("Error updating mood and sticker in context", e);
+      console.error("Error updating user data in context", e);
     }
   };
 
   return (
-    <UserContext.Provider value={{ currentUser, loginUser, logout, isLoading, updateUserMood }}>
+    <UserContext.Provider value={{ 
+      currentUser, 
+      loginUser, 
+      logout, 
+      isLoading, 
+      updateUserMood 
+    }}>
       {children}
     </UserContext.Provider>
   );
