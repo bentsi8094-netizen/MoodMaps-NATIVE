@@ -1,26 +1,28 @@
+
+
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
+const aiRoutes = require('./routes/aiRoutes'); // הוספה
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/ai', aiRoutes); // חיבור ה-Route החדש
 
-// בריאות השרת (Health Check)
-app.get('/', (req, res) => res.send('🚀 Status Map Server is Running'));
+app.get('/', (req, res) => res.send('🚀 Status Map Server is Running with AI Agent'));
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`\n--- 🚀 SERVER STARTED ---`);
-    console.log(`📍 Network: http://192.168.43.235:${PORT}`);
-    console.log(`🔗 Routes: /api/users, /api/posts`);
+    console.log(`📍 AI Enabled: GPT-4o-mini + DALL-E 3`);
     console.log(`-------------------------\n`);
 });

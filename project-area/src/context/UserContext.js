@@ -40,17 +40,27 @@ export function UserProvider({ children }) {
       console.error("UserContext: Error during logout", e);
     }
   };
-const updateUserMood = async (newMood) => {
-  try {
-    const updatedUser = { ...currentUser, mood: newMood };
-    setCurrentUser(updatedUser);
-    await AsyncStorage.setItem('user_data', JSON.stringify(updatedUser));
-  } catch (e) {
-    console.error("Error updating mood in context", e);
-  }
-};
+
+  // פונקציה מעודכנת השומרת גם את האימוג'י וגם את כתובת המדבקה
+  const updateUserMood = async (newMood, stickerUrl = null) => {
+    try {
+      if (!currentUser) return;
+
+      const updatedUser = { 
+        ...currentUser, 
+        mood: newMood, 
+        stickerUrl: stickerUrl // שומרים את ה-URL של המדבקה מה-AI
+      };
+      
+      setCurrentUser(updatedUser);
+      await AsyncStorage.setItem('user_data', JSON.stringify(updatedUser));
+    } catch (e) {
+      console.error("Error updating mood and sticker in context", e);
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ currentUser, loginUser, logout, isLoading ,updateUserMood}}>
+    <UserContext.Provider value={{ currentUser, loginUser, logout, isLoading, updateUserMood }}>
       {children}
     </UserContext.Provider>
   );
